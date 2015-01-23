@@ -3,7 +3,7 @@
 # Installation
 Fill the settings with your app. You can register one here : https://apps.twitter.com/app/
 
-run `meteor`
+run `meteor --settings settings.json`
 
 You can query a get here : `http://localhost:3000/twitt/?scrname=USERSCREENNAME&pufNum=1`
 
