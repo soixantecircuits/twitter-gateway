@@ -1,0 +1,7 @@
+<template name="list">
+  <ul>
+    {{#each userInCollection}}
+         <li><img src="{{services.twitter.profile_image_url}}"> {{profile.name}} (@{{services.twitter.screenName}})</li>
+    {{/each}}
+  </ul>
+</template>
