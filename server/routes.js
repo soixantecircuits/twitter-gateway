@@ -20,7 +20,8 @@ var postATwitt = function(val, cb) {
       }
     })
   } else {
-    console.log('Can\'t find user, with screen name: '+val);
+    console.log('Can\'t find user, with screen name: '+val + ' at ' + Date.now());
+    cb('Can\'t find user with screen name ' + val, null);
   }
 }
 
