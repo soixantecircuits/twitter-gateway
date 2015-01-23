@@ -7,8 +7,9 @@ var twitt = new TwittAPI(Meteor.settings.twitter);
 
 var postATwitt = function(val, cb) {
   if (setUser(val)) {
+    var pick = Math.floor(Math.random() * status.length);
     twitt.post('statuses/update', {
-      status: status[0].content
+      status: status[pick].content + ' ' + Date.now()
     }, function(err, data, response) {
       if(err){
         console.log(err);
@@ -51,13 +52,15 @@ Router.route('/twitt', {
 
     postATwitt(params.query.scrname, Meteor.bindEnvironment(function(err, res){
       if(err){
-        response.setHeader('Content-Type', 'application/json');
+        response.setHeader('Content-Type', 'application/jsonp');
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.end(JSON.stringify({
           msg:'Error, while posting twitt for: ' + params.query.scrname,
           data: err
         }));
       } else{
-        response.setHeader('Content-Type', 'application/json');
+        response.setHeader('Content-Type', 'application/jsonp');
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.end(JSON.stringify({
           msg:'Twitt posted for: ' + params.query.scrname,
           data: res
