@@ -92,4 +92,4 @@ npm-debug.log
 .meteor/local
 .meteor/meteorite
 
-./settings.json
+settings.json
