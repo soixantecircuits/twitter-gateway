@@ -18,5 +18,14 @@ if (Meteor.isServer) {
     } else {
       console.log('Collection/Status - demo status added.');
     }
+    if (Status.find().count() < 10) {
+        console.log("Importing private/status.json to db")
+
+        var data = JSON.parse(Assets.getText("status.json"));
+
+        data.forEach(function (item, index, array) {
+            Status.insert(item);
+        })
+    }
   });
 }
