@@ -93,3 +93,5 @@ npm-debug.log
 .meteor/meteorite
 
 settings.json
+.idea
+twitter-gateway.iml
