@@ -5,11 +5,12 @@ var status = [];
 
 var twitt = new TwittAPI(Meteor.settings.twitter);
 
-var postATwitt = function(val, cb) {
+var postATwitt = function(val, pufNum, cb) {
   if (setUser(val)) {
     var pick = Math.floor(Math.random() * status.length);
+    var pufNumHashtag = pufNum === ''? '' : '#fatBoy'+pufNum;
     twitt.post('statuses/update', {
-      status: status[pick].content + ' ' + Date.now() + Meteor.settings.hashtag
+      status: status[pick].content + ' ' + Meteor.settings.hashtag + ' ' + pufNumHashtag + ' '  + Date.now()
     }, function(err, data, response) {
       if (err) {
         //console.log(err);
@@ -53,8 +54,8 @@ Router.route('/twitt', {
   .get(function() {
     var params = this.params;
     response = this.response;
-
-    postATwitt(params.query.scrname, Meteor.bindEnvironment(function(err, res) {
+    var pufNum = params.query.pufNum === undefined? '': params.query.pufNum;
+    postATwitt(params.query.scrname, pufNum, Meteor.bindEnvironment(function(err, res) {
       if (err) {
         response.setHeader('Content-Type', 'application/json');
         response.setHeader("Access-Control-Allow-Origin", "*");
