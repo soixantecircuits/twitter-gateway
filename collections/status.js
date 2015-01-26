@@ -25,4 +25,14 @@ Status = new Mongo.Collection('status');
             Status.insert(item);
         })
     }
+    var status = Status.findOne({
+      'screenName': 'EugeneLeBot'
+    });
+    if (status === undefined) {
+        console.log("Importing private/status_eugene.json to db")
+        var data = JSON.parse(Assets.getText("status_eugene.json"));
+        data.forEach(function (item, index, array) {
+            Status.insert(item);
+        })
+    }
   });
