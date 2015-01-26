@@ -55,17 +55,15 @@ var postATwitt = function(screenName, pufNum, cb) {
       }
     }
   } else {
-    console.log('Can\'t find user, with screen name: ' + val + ' at ' + Date.now());
-    cb('Can\'t find user with screen name ' + val, null);
+    console.log('Can\'t find user, with screen name: ' + screenName + ' at ' + Date.now());
+    cb('Can\'t find user with screen name ' + screenName, null);
   }
 }
 
 var setUser = function(screenName) {
-
   var user = Meteor.users.findOne({
     'services.twitter.screenName': screenName
   });
-
   if (user) {
     console.log('---- auth set for: ', screenName);
     console.log(user.services.twitter);
