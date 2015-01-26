@@ -8,23 +8,23 @@ var twitt = new TwittAPI(Meteor.settings.twitter);
 var postATwitt = function(val, cb) {
   if (setUser(val)) {
     twitt.post('statuses/update', {
-      status: status[0].content
+      status: new Date() + ' : ' + status[0].content
     }, function(err, data, response) {
-      if(err){
-        console.log(err);
+      if (err) {
+        //console.log(err);
         cb(err);
       } else {
-        console.log(data);
+        //console.log(data);
         cb(undefined, data);
       }
     })
   } else {
-    console.log('Can\'t find user, with screen name: '+val);
+    console.log('Can\'t find user, with screen name: ' + val);
   }
 }
 
 var setUser = function(screenName) {
-  //console.log(screenName);
+
   var user = Meteor.users.findOne({
     'services.twitter.screenName': screenName
   });
@@ -34,8 +34,11 @@ var setUser = function(screenName) {
       'access_token': user.services.twitter.accessToken,
       'access_token_secret': user.services.twitter.accessTokenSecret
     });
+
     //status = ['Mama mia'];
-    status = Status.find({'screenName':screenName}).fetch();
+    status = Status.find({
+      'screenName': screenName
+    }).fetch();
     return true;
   } else {
     return false;
@@ -46,20 +49,20 @@ Router.route('/twitt', {
     where: 'server'
   })
   .get(function() {
-    var params  = this.params;
+    var params = this.params;
     response = this.response;
 
-    postATwitt(params.query.scrname, Meteor.bindEnvironment(function(err, res){
-      if(err){
+    postATwitt(params.query.scrname, Meteor.bindEnvironment(function(err, res) {
+      if (err) {
         response.setHeader('Content-Type', 'application/json');
         response.end(JSON.stringify({
-          msg:'Error, while posting twitt for: ' + params.query.scrname,
+          msg: 'Error, while posting twitt for: ' + params.query.scrname,
           data: err
         }));
-      } else{
+      } else {
         response.setHeader('Content-Type', 'application/json');
         response.end(JSON.stringify({
-          msg:'Twitt posted for: ' + params.query.scrname,
+          msg: 'Twitt posted for: ' + params.query.scrname,
           data: res
         }));
       }

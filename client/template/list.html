@@ -1,0 +1,9 @@
+<template name="list">
+  <ul>
+    {{#each userInCollection}}
+        {{#if services.twitter}}
+         <li><a href="http://twitter.com/@{{services.twitter.screenName}}"><img src="{{services.twitter.profile_image_url}}"></a> <a href="http://twitter.com/@{{services.twitter.screenName}}">{{profile.name}} (@{{services.twitter.screenName}}) </a><button data-screenname="{{services.twitter.screenName}}" class='btn btn-default'>remove tweets</button></li>
+        {{/if}}
+    {{/each}}
+  </ul>
+</template>

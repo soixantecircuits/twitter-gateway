@@ -1,0 +1,7 @@
+<template name="options">
+  <ul>
+    {{#each optionsInCollection}}
+       <li>{{name}}: <input type='checkbox' checked={{isChecked}} ></li>
+    {{/each}}
+  </ul>
+</template>
