@@ -3,7 +3,7 @@ var TwittAPI = Meteor.npmRequire('twit'),
   Fiber = Meteor.npmRequire('fibers'),
   Future = Meteor.npmRequire('fibers/future'),
   twitt = new TwittAPI(Meteor.settings.twitter),
-  statusByName = statusEditoByName = originalStatusAction = originalStatusEdito = {};
+  statusActionByName = statusEditoByName = originalStatusAction = originalStatusEdito = {};
 
 var setupDataTweet = function() {
   var statusAction = Status.find({
@@ -11,18 +11,18 @@ var setupDataTweet = function() {
   }).fetch();
 
   _.each(statusAction, function(status, index) {
-    if (typeof statusByName[status.screenName] === 'undefined') {
-      statusByName[status.screenName] = []
+    if (typeof statusActionByName[status.screenName] === 'undefined') {
+      statusActionByName[status.screenName] = []
     }
-    statusByName[status.screenName].push(status);
+    statusActionByName[status.screenName].push(status);
   });
-  originalStatusAction = JSON.parse(JSON.stringify(statusByName));
+  originalStatusAction = JSON.parse(JSON.stringify(statusActionByName));
 
-  var statusAction = Status.find({
+  var statusEdito = Status.find({
     type: 'edito'
   }).fetch();
 
-  _.each(statusAction, function(status, index) {
+  _.each(statusEdito, function(status, index) {
     if (typeof statusEditoByName[status.screenName] === 'undefined') {
       statusEditoByName[status.screenName] = []
     }
@@ -35,9 +35,13 @@ var autoTwitt = function() {
   users = Meteor.users.find({}).fetch();
 
   _.each(users, function(user, index) {
+    var interval = Random.choice(Meteor.settings.intervalAutoTweet);
     if (typeof user.services.twitter !== "undefined") {
       var botScreenName = user.services.twitter.screenName
-      setInterval(function() {
+      if(botScreenName.toLowerCase() === 'AugusteLeBot'.toLowerCase()){
+        interval = Random.choice(Meteor.settings.intervalAutoTweet) * 5;
+      }
+      Meteor.setTimeout(function autoPostTwitt() {
         if (typeof statusEditoByName[botScreenName] === 'undefined') {
           console.log('no status of type action for: ' + botScreenName);
         } else {
@@ -46,12 +50,12 @@ var autoTwitt = function() {
             statusEditoByName[botScreenName] = _.shuffle(originalStatusEdito[botScreenName].slice());
           }
           if (typeof statusEditoByName[botScreenName] !== 'undefined' && statusEditoByName[botScreenName].length >= 1) {
-            postMsg(botScreenName, statusByName[botScreenName].pop().content);
+            postMsg(botScreenName, statusEditoByName[botScreenName].pop().content);
           } else {
             console.log('Nothing to reply, add some status...');
           }
         }
-      }, Meteor.settings.intervalAutoTweet);
+      }, interval);
     }
   });
 };
@@ -122,11 +126,13 @@ var setUser = function(screenName) {
 
 Meteor.startup(function() {
 
-
   setupDataTweet();
 
   if (Meteor.settings.autoTweet) {
     autoTwitt();
+    Meteor.setInterval(function autoPostTwitt() {
+      autoTwitt();
+    }, 60000);
   }
 
   users = Meteor.users.find({}).fetch(),
@@ -150,15 +156,15 @@ Meteor.startup(function() {
       /*console.log(tweet.user.screen_name + ': ' + tweet.text);
       console.log(tweet, tweet.entities.user_mentions);*/
       _.each(tweet.entities.user_mentions, function(user, index) {
-        if (typeof statusByName[user.screen_name] === 'undefined') {
+        if (typeof statusActionByName[user.screen_name] === 'undefined') {
           console.log('no status of type action for: ' + user.screen_name);
         } else {
-          if (statusByName[user.screen_name].length < 1) {
+          if (statusActionByName[user.screen_name].length < 1) {
             console.log('Approvisionning status...');
-            statusByName[user.screen_name] = _.shuffle(originalStatusAction[user.screen_name].slice());
+            statusActionByName[user.screen_name] = _.shuffle(originalStatusAction[user.screen_name].slice());
           }
-          if (typeof statusByName[user.screen_name] !== 'undefined' && statusByName[user.screen_name].length >= 1) {
-            reply(user.screen_name, tweet.user.screen_name, statusByName[user.screen_name].pop().content);
+          if (typeof statusActionByName[user.screen_name] !== 'undefined' && statusActionByName[user.screen_name].length >= 1) {
+            reply(user.screen_name, tweet.user.screen_name, statusActionByName[user.screen_name].pop().content);
           } else {
             console.log('Nothing to reply, add some status...');
           }

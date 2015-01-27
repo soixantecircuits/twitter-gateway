@@ -71,11 +71,6 @@ var setUser = function(screenName) {
       'access_token': user.services.twitter.accessToken,
       'access_token_secret': user.services.twitter.accessTokenSecret
     });
-
-    //status = ['Mama mia'];
-    status = Status.find({
-      'screenName': screenName
-    }).fetch();
     return true;
   } else {
     return false;

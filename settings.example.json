@@ -5,8 +5,8 @@
     "access_token": "",
     "access_token_secret": ""
   },
-  "intervalAutoTweet":5000,
-  "autoTweet":true,
+  "intervalAutoTweet":[35000, 55000, 45000, 30000, 50000, 60000, 65000],
+  "autoTweet":false,
   "hashtag":"#yourhashtag",
   "screenName": "screenName"
 }
